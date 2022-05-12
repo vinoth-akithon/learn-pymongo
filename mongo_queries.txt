@@ -1,0 +1,113 @@
+///////  database info ///////
+db --> getting current db name.
+show dbs --> getting all available dbs in the server.
+db.adminCommand("listDatabases") --> getting all available dbs in the server.
+db.getMongo().getDBNames() --> getting all available dbs in the server.
+
+/////  collections info /////
+show collections --> to get all the collection name inside the current database.
+show tables --> to get all the collection name inside the current database.
+db.getCollectionNames() --> to get all the collection name inside the current database. 
+db.createCollection("<collection_name>") --> used to create a new collection inside the current db.
+
+
+///  Drop collections  ////////
+db.collection.drop() --> used to drop the collection from the db.
+
+use <db name> --> to switch the db or it will create a new one if it is not exist.
+db.help() --> get the fuctions and the attributes of the current db has.
+db.collecction.help() --> get the function and attributes of the current collection has.
+db.collection.insert({data}) --> used to insert a document into the collection.
+db.collection.save({data}) --> used to insert a document into the collection or update the existing collection.
+db.colection.insertOne({data}) --> used to insert one document.
+db.collection.insertMany([{data},{data}]) --> used to insert the list of ducument into the collection.
+db.collection.update({quiry},{data}) --> update the existing entire document.
+db.collection.update({quiry},{$set: {data}}) --> update only the specific fields in the document that is first matched.
+db.collection.update({quiry},{$set: {data}},{multi:true}) --> update only the specific fields in the documents that all matched.
+db.collection.updateOne({quiry},{$set: {data}) --> update the first matched one.
+db.collection.updateMany({quiry},{$set: {data}}) --> update all mached document.
+db.collecction.replaceOne({quiry},{data}) --> replace the entire document with new fields and id.
+db.collection.deleteOne({quiry}) --> delete the first matched document.
+db.collection.remove({quiry},true) --> for deleting the first matched document.
+db.collection.deleteMany({quiry}) --> delete all mached documents.
+db.collection.remove({quiry}) --> delete all the matched documents.
+
+/////     Quering the data  ////////
+db.collection.find() --> retrieve all the document in the collections.(Inefficient for large collection)
+db.collection.find({}) --> retrieve all the document in the collections.
+db.collection.find().pretty() --> for printing the returned document in pretty format.
+db.collection.find({<key>:<value>}) --> retrieve all the quiry matched documents in the collection.
+db.collection.findOne({}) --> retrieve the first docuemnt inside the collection.
+db.collection.findOne({query}) --> retrieve the query matched first docuemnt inside the collection.
+
+/////   Projection Query  ///////
+db.collection.find({quiry}, {_id:0,<key_name>:1,<key_name>:0}) --> including and excluding returing field.(by passing '0' or '1')
+    >> _id will return the defalut.
+    >> by adding _id = 0 ,we can exclude the _id.
+
+db.collection.find({query}).count() --> to count the number of query matched documents in the collection.
+db.collection.find({query}).length() --> to count the number of query matched documents in the collection.
+db.collection.find({query}).skip(<number>) --> to skip the number of query matched document.
+db.collection.find({query}).limit(<number>) --> to limit the number of query matched document.
+db.collection.find({query}).sort({<key_name>:<number>}) --> to sort the document in accending(1) or decending(-1) order of the query matched doc.
+
+
+/////   Quering with conditions    ///////
+db.collection.find({query1,query2}) --> used to retrive the documents only all the conditions passed(AND)
+db.collection.find({$and : [ {<key>:<value>},{<key>:<value>}]) --> retrieve documents only all the given conditions passed.(AND)
+db.collection.find({$or: [ {<key>:<value>},{<key>:<value>}]}) --> retrieve documents either one condition passed.(OR)
+db.collection.find({query1, $or:{[{query2},{query3}]}}) --> retrieve document only if query1 and either of query2 or query3 passed (AND OR) 
+db.collection.find({$in: [value1,value2]}}) --> retrive the document only if either one condition is passed.(OR)
+
+//// Greater than or equal   /////
+db.collection.find({<key_name>:{$gte:<number>}}) --> retrive the document only if greater than or equal to the specified value
+db.collection.find({<key_name>:{$gt:<number>}}) --> retrive the document only if greater than to the specified value
+db.collection.find({<key_name>:{$lte:<number>}}) --> retrive the document only if lesser than or equal to the specified value
+db.collection.find({<key_name>:{$lt:<number>}}) --> retrive the document only if lesser than to the specified value
+db.collection.find({<key_name>:{$eq:<number>}}) --> retrive the document only if equal to the specified value
+
+db.collection.update({query} ,{$push: {<list_name> : <value>}}) --> to push a element into the list.
+db.collection.update({quiry} ,{$pull: {<list_name> : <value>}}) --> to pull a element from the list.
+db.collection.update({query} ,{$pop: {<list_name>: 1}}) --> popping the last element in the array.
+db.collection.update({query} ,{$pop: {<list_name>}: -1}) --> to pop the first element from the array.
+db.collection.update({query, <list_name>: <old_value>} ,{$set:{<list_name>.$ : <new_value>}}) --> to update a particular data entity in array.
+
+db.collection.update({query ,<embed_name>.<key_name>: <old_value>} , {$set: {<embed_name.key_name>:<new_value>}}) --> to update a element in the embed doc.
+db.collection.update({query, <list_name>.<key_name>: <old_value>}, {$set: {<list_name>.$.<key_name>:<new_value>}}) --> to update a list of embed document.
+
+db.collection.update({query}, {update}, {mutiple:true}) --> 'multiple' true cause updation takes place all the query matched docs.default value false.
+
+
+////////////  Aggregation in MongoDB   //////////
+>> Agrigation operation group the values from the multiple document together and perform the variety of
+   operations on the grouped date and returns the single result. 
+
+>> Three way to perform Aggregation in MongoDB
+    1. Aggregation pipeline
+    2. Map reduce function
+    3. Single purpose Aggregation method.
+
+db.collection.aggregate([{$match:{query}}]) --> will return the query matched document.
+db.collection.aggregate([{$match:{query}, {$project:{<key_name>:<value(0 or 1)>}}}]) --> will return the desired fields for the query matched doc.
+db.collection.aggregate([{$group:{_id : "$<key_name>",<operation>}}]) --> used to group the documents by the field specified and perform a certain action.
+db.collection.aggregate([{$group: {_id: null,<operation>}}]) --> used to group all the document and perform a certain action.
+db.collection.aggregate([{$group: {_id: null, noOfCount: {$sum: 1}}]) --> used to count the number of document by using $sum operator.
+db.collection.aggregate([{$group: {_id: "$<query_field>",average: {$avg: "$<field_name>"}}]) --> used to find the average of the specific field in each group. 
+db.collection.aggregate([{$group: {_id: "$<query_field>",minimum: {$min: "$<field_name>"}}}]) --> used to find the minimum of the specific field in each group.
+db.collection.aggregate([{$group: {_id: "$<query_field>", maximum: {$max: "$<filed_name>"} }}]) --> used to find the maximum of the specific field.
+db.collection.aggregate([{$group: {_id: "$<query_field>", last_doc: {$last: "$<filed_name>"}}}]) --> used to getting specific field from the last doc of each group
+db.collection.aggregate([{$group: {_id: "$<query_field>", first_doc: {$first: "$<filed_name>"}}}]) --> used to getting specific field from the first doc of each group
+db.collection.aggregate([{$group: {_id: "$<query_field>", arrpush: {$push: "$<field_name>"}}}]) --> used to get the specific field in the array format.
+db.collection.aggregate([{$group: {_id: "$<query_field>", arrset: {$addToSet: "$<field_name>"}}}]) --> used to get the specific field in the array format(it removes deplicates).
+db.collection.aggregate([{$group: {_id: "$<query_field>"}}, {$match: {<resulted group key>}}]) --> used to match the group returned documents.
+db.collection.aggragate([{$match: {query}},{$unwind: "$<array_name>"}]) --> used to create multiple in memory document for each value in array type field.
+db.collection.aggregate([{$match: {query}}, {$sort: {<field_name>: <1 or -1>}}]) --> used to sort the query matched doc.(1 for accending and -1 for decending)
+db.collection.aggregate([{$match: {query}}, {$skip: <numeric_value>}]) --> used to skip the specified number document from the query matched doc.
+db.collection.aggregate([{$match: {query}}, {$limit: <numeric_value>}]) --> used to limit the only the specific number of doc from the query matched doc.
+
+# Projection
+db.collection.aggregate([{$match: {query}}, {$project: {"<field_name>","<field_name>": {$gt: [$<field_name>,<value>]}}}]) --> used to perform comparition operator in projection.
+db.collection.aggregate([{$match: {<query1>, <field_name>: {$gt: <number>} }}]) --> used to perform comparision operator on match.
+db.collection.aggregate([{$match: {<query1>, <field_name>: {$and: [{$gt:<number>},....]}}}]) --> used to perform boolean operation in match
+db.collection.aggregate([{$match: {query}}, {$project: {"<field_name>" : {$and: [ {$gt: ["$<field_name>",<value>]}, ....]}}}]) used to perform boolem operation in projection.
+db.collection.aggregate([{$sample:{size:<number>}}]) --> used to get the smaple document(randomly picks) based on size.

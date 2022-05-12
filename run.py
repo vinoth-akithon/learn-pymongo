@@ -1,5 +1,4 @@
-from flask import Flask
+from test import app
 
-app = Flask(__name__)
-
-app.run(debug=True)
+print("I am passed")
+app.app_instance.run()
